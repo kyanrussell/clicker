@@ -96,13 +96,16 @@
   </div>
 
   <div id="toast"></div>
+  <input id="kb-sink" readonly tabindex="0" style="position:fixed;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true">
 
   <script>
     const counts = [0, 0, 0];
     const keys = ['q', 'w', 'e'];
 
-    document.addEventListener('keydown', (ev) => {
-      if (ev.target.tagName === 'INPUT') return;
+    const sink = document.getElementById('kb-sink');
+
+    function handleKey(ev) {
+      if (ev.target.id && ev.target.id.startsWith('label')) return;
       const i = keys.indexOf(ev.key);
       if (i !== -1) {
         counts[i]++;
@@ -111,6 +114,18 @@
         counts.fill(0);
         [0, 1, 2].forEach(n => document.getElementById('count' + n).textContent = 0);
       }
+    }
+
+    document.addEventListener('keydown', handleKey);
+
+    // iOS Safari requires a focused element to receive Bluetooth keyboard events.
+    // Route focus to the sink on any tap outside a label input.
+    document.addEventListener('touchend', (ev) => {
+      if (!ev.target.id || !ev.target.id.startsWith('label')) sink.focus();
+    });
+
+    document.querySelectorAll('input[id^="label"]').forEach(inp => {
+      inp.addEventListener('blur', () => sink.focus());
     });
 
     function copy(i) {
