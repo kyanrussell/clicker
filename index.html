@@ -79,21 +79,21 @@
   <div class="row">
     <input type="text" id="label0" placeholder="label" value="">
     <span class="count" id="count0">0</span>
-    <span class="key-hint">q</span>
+    <span class="key-hint">q<br>a<br>z</span>
     <button onclick="copy(0)">copy</button>
   </div>
 
   <div class="row">
     <input type="text" id="label1" placeholder="label" value="">
     <span class="count" id="count1">0</span>
-    <span class="key-hint">w</span>
+    <span class="key-hint">w<br>s<br>x</span>
     <button onclick="copy(1)">copy</button>
   </div>
 
   <div class="row">
     <input type="text" id="label2" placeholder="label" value="">
     <span class="count" id="count2">0</span>
-    <span class="key-hint">e</span>
+    <span class="key-hint">e<br>d<br>c</span>
     <button onclick="copy(2)">copy</button>
   </div>
 
@@ -102,15 +102,20 @@
 
   <script>
     const counts = [0, 0, 0];
-    const keys = ['q', 'w', 'e'];
+    const keyMap = {
+      'q': [0, 1],  'w': [1, 1],  'e': [2, 1],
+      'a': [0, 3],  's': [1, 3],  'd': [2, 3],
+      'z': [0, 10], 'x': [1, 10], 'c': [2, 10],
+    };
 
     const sink = document.getElementById('kb-sink');
 
     function handleKey(ev) {
       if (ev.target.id && ev.target.id.startsWith('label')) return;
-      const i = keys.indexOf(ev.key);
-      if (i !== -1) {
-        counts[i]++;
+      const entry = keyMap[ev.key];
+      if (entry) {
+        const [i, amount] = entry;
+        counts[i] += amount;
         document.getElementById('count' + i).textContent = counts[i];
       } else if (ev.key === 'r') {
         counts.fill(0);
