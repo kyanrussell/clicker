@@ -42,14 +42,7 @@
       text-align: center;
     }
 
-    .key-hint {
-      font-size: 2.5vw;
-      color: #666;
-      width: 3vw;
-      text-align: center;
-    }
-
-    button {
+button {
       background: #2a2a2a;
       border: 1px solid #444;
       color: #eee;
@@ -76,24 +69,23 @@
 </head>
 <body>
 
+  <button onclick="reset()">clear</button>
+
   <div class="row">
     <input type="text" id="label0" placeholder="label" value="">
     <span class="count" id="count0">0</span>
-    <span class="key-hint">q<br>a<br>z</span>
     <button onclick="copy(0)">copy</button>
   </div>
 
   <div class="row">
     <input type="text" id="label1" placeholder="label" value="">
     <span class="count" id="count1">0</span>
-    <span class="key-hint">w<br>s<br>x</span>
     <button onclick="copy(1)">copy</button>
   </div>
 
   <div class="row">
     <input type="text" id="label2" placeholder="label" value="">
     <span class="count" id="count2">0</span>
-    <span class="key-hint">e<br>d<br>c</span>
     <button onclick="copy(2)">copy</button>
   </div>
 
@@ -118,8 +110,7 @@
         counts[i] += amount;
         document.getElementById('count' + i).textContent = counts[i];
       } else if (ev.key === 'r') {
-        counts.fill(0);
-        [0, 1, 2].forEach(n => document.getElementById('count' + n).textContent = 0);
+        reset();
       }
     }
 
@@ -140,6 +131,11 @@
       const text = counts[i] + label;
       navigator.clipboard.writeText(text);
       showToast('copied: ' + text);
+    }
+
+    function reset() {
+      counts.fill(0);
+      [0, 1, 2].forEach(n => document.getElementById('count' + n).textContent = 0);
     }
 
     function showToast(msg) {
