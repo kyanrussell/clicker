@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Counter</title>
+  <style>
+    body {
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #1a1a1a;
+      color: #eee;
+      gap: 16px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="text"] {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      color: #eee;
+      font-family: monospace;
+      font-size: 1.2rem;
+      padding: 6px 10px;
+      width: 140px;
+      border-radius: 4px;
+    }
+
+    .count {
+      font-size: 2rem;
+      width: 80px;
+      text-align: center;
+    }
+
+    .key-hint {
+      font-size: 0.75rem;
+      color: #666;
+      width: 16px;
+      text-align: center;
+    }
+
+    button {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      color: #eee;
+      font-family: monospace;
+      font-size: 0.9rem;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:active {
+      background: #3a3a3a;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      font-size: 0.85rem;
+      color: #aaa;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="row">
+    <input type="text" id="label0" placeholder="label" value="">
+    <span class="count" id="count0">0</span>
+    <span class="key-hint">q</span>
+    <button onclick="copy(0)">copy</button>
+  </div>
+
+  <div class="row">
+    <input type="text" id="label1" placeholder="label" value="">
+    <span class="count" id="count1">0</span>
+    <span class="key-hint">w</span>
+    <button onclick="copy(1)">copy</button>
+  </div>
+
+  <div class="row">
+    <input type="text" id="label2" placeholder="label" value="">
+    <span class="count" id="count2">0</span>
+    <span class="key-hint">e</span>
+    <button onclick="copy(2)">copy</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const counts = [0, 0, 0];
+    const keys = ['q', 'w', 'e'];
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.target.tagName === 'INPUT') return;
+      const i = keys.indexOf(ev.key);
+      if (i !== -1) {
+        counts[i]++;
+        document.getElementById('count' + i).textContent = counts[i];
+      } else if (ev.key === 'r') {
+        counts.fill(0);
+        [0, 1, 2].forEach(n => document.getElementById('count' + n).textContent = 0);
+      }
+    });
+
+    function copy(i) {
+      const label = document.getElementById('label' + i).value;
+      const text = counts[i] + label;
+      navigator.clipboard.writeText(text);
+      showToast('copied: ' + text);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.opacity = '1';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.style.opacity = '0', 1500);
+    }
+  </script>
+
+</body>
+</html>
