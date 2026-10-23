@@ -93,7 +93,13 @@ button {
   <input id="kb-sink" readonly tabindex="0" style="position:fixed;left:-9999px;width:1px;height:1px;opacity:0;font-size:16px;" aria-hidden="true">
 
   <script>
-    const counts = [0, 0, 0];
+    const saved = JSON.parse(localStorage.getItem('clicker') || 'null');
+    const counts = saved ? saved.counts : [0, 0, 0];
+
+    function save() {
+      const labels = [0, 1, 2].map(i => document.getElementById('label' + i).value);
+      localStorage.setItem('clicker', JSON.stringify({ counts, labels }));
+    }
     const keyMap = {
       'q': [0, 1],  'w': [1, 1],  'e': [2, 1],
       'a': [0, 3],  's': [1, 3],  'd': [2, 3],
@@ -102,6 +108,12 @@ button {
 
     const sink = document.getElementById('kb-sink');
 
+    // Restore state
+    [0, 1, 2].forEach(i => {
+      document.getElementById('count' + i).textContent = counts[i];
+      if (saved && saved.labels[i]) document.getElementById('label' + i).value = saved.labels[i];
+    });
+
     function handleKey(ev) {
       if (ev.target.id && ev.target.id.startsWith('label')) return;
       const entry = keyMap[ev.key];
@@ -109,6 +121,7 @@ button {
         const [i, amount] = entry;
         counts[i] += amount;
         document.getElementById('count' + i).textContent = counts[i];
+        save();
       } else if (ev.key === 'r') {
         reset();
       }
@@ -123,7 +136,7 @@ button {
     });
 
     document.querySelectorAll('input[id^="label"]').forEach(inp => {
-      inp.addEventListener('blur', () => sink.focus());
+      inp.addEventListener('blur', () => { save(); sink.focus(); });
     });
 
     function copy(i) {
@@ -136,6 +149,7 @@ button {
     function reset() {
       counts.fill(0);
       [0, 1, 2].forEach(n => document.getElementById('count' + n).textContent = 0);
+      save();
     }
 
     function showToast(msg) {
